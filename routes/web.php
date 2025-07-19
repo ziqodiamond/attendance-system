@@ -1,7 +1,10 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Admin\ManageUserController;
+use App\Http\Controllers\Admin\ManageLocationController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -17,4 +20,34 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+Route::middleware(['auth', 'role:admin'])->name('admin.')->prefix('admin')->group(function () {
+    // Routes that only admin users can access
+    Route::get('/', [AdminController::class, 'index'])->name('index');
+
+    Route::name('manage_users.')->prefix('users')->group(function () {
+        Route::get('/', [ManageUserController::class, 'index'])->name('index');
+        Route::post('/', [ManageUserController::class, 'store'])->name('store');
+        Route::put('/{id}', [ManageUserController::class, 'update'])->name('update');
+    });
+
+    Route::name('manage_locations.')->prefix('locations')->group(function () {
+        Route::get('/', [ManageLocationController::class, 'index'])->name('index');
+        Route::post('/', [ManageLocationController::class, 'store'])->name('store');
+        Route::put('/{id}', [ManageLocationController::class, 'update'])->name('update');
+    });
+
+    Route::name('schedules.')->prefix('schedules')->group(function () {
+        Route::get('/', [ManageLocationController::class, 'index'])->name('index');
+        Route::post('/', [ManageLocationController::class, 'store'])->name('store');
+        Route::put('/{id}', [ManageLocationController::class, 'update'])->name('update');
+    });
+});
+
+Route::middleware(['auth', 'role:user'])->group(function () {
+    // Routes that only regular users can access
+    Route::get('/user', function () {
+        return view('user.dashboard');
+    })->name('user.dashboard');
+});
+
+require __DIR__ . '/auth.php';
