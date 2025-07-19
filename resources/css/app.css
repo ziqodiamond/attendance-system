@@ -1,13 +1,16 @@
 @import 'tailwindcss';
+@import "flowbite/src/themes/default";
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 @source '../**/*.blade.php';
 @source '../**/*.js';
+@source "../node_modules/flowbite";
 
 @plugin "@tailwindcss/forms";
+@plugin "flowbite/plugin";
 
-
+@custom-variant dark (&:where(.dark, .dark *));
 
 [x-cloak] {
     display: none !important;
